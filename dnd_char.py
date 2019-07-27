@@ -20,7 +20,8 @@ try:
     optlist, args = getopt.getopt(
             sys.argv[1:],
             'c:r:b:s:',
-            ['class=', 'race=', 'background=', 'statistics=', 'max-abilities', 'roll-four', 'roll-three', 'random-class'])
+            ['class=', 'race=', 'background=', 'statistics=', 'max-abilities', 'roll-four', 
+             'roll-three', 'random-class', 'help'])
 
 except getopt.GetoptError as e:
     print(e)
@@ -43,6 +44,17 @@ for o, a in optlist:
         chosen['roll_three'] = True
     elif o == '--random-class':
         chosen['random_class'] = True
+    elif o == '--help':
+        print('Execute the program to generate a character. The following options are available.')
+        print('%-40s %s' % ('-c, --class [class]:', 'Choose a class.'))
+        print('%-40s %s' % ('-r, --race [race]:', 'Choose a race.'))
+        print('%-40s %s' % ('-b, --background [background]:', 'Choose a background'))
+        print('%-40s %s' % ('-s, --statistics [population]:', 'Create a population of random characters and show some statistics.'))
+        print('%-40s %s' % ('--max-abilities:', 'Roll only 20s for abilities.'))
+        print('%-40s %s' % ('--roll-four:', 'Roll four dice for abilitise and drop the lowest. This is the default.'))
+        print('%-40s %s' % ('--roll-three:', 'Roll three dice for abilities.'))
+        print('%-40s %s' % ('--random-class:', 'Choose a random class disregarding ability scores.'))
+        exit()
     else:
         print('unhandled option: %s' % o)
 
