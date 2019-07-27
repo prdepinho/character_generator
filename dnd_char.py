@@ -46,7 +46,7 @@ for o, a in optlist:
         chosen['random_class'] = True
     elif o == '--help':
         print('Execute the program to generate a character. The following options are available.')
-        print('The program will try to chose the best class and skills according to rolled abilities.')
+        print('The program will try to choose the best class and skills according to rolled abilities.')
         print('%-40s %s' % ('-c, --class [class]:', 'Choose a class.'))
         print('%-40s %s' % ('-r, --race [race]:', 'Choose a race.'))
         print('%-40s %s' % ('-b, --background [background]:', 'Choose a background'))
