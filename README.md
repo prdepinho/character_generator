@@ -9,13 +9,13 @@ Executing py dnd.char_py will generate a random character.
 Optionally, you can input these arguments to control how the character should
 be generated:
 
--c --class <class>: specify the class of the character.
+-c --class \<class\>: specify the class of the character.
 
--r --race <race>: specify the race.
+-r --race \<race\>: specify the race.
 
--s --statistics <population>: this generates a population of characters and exhibit statistics about them. This option works with the others. This is also useful to know the exact string to use to specify race and class.
+-s --statistics \<population\>: this generates a population of characters and exhibit statistics about them. This option works with the others. This is also useful to know the exact string to use to specify race and class.
 
--b --background <bg>: specify background.
+-b --background \<bg\>: specify background.
 
 --max-abilities: roll 20 for all abilities.
 
