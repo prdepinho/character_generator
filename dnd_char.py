@@ -3,6 +3,7 @@ import math
 import sys
 import getopt
 import statistics
+from dnd_dice import roll, roll_from_list
 
 
 chosen = {
@@ -20,7 +21,7 @@ try:
     optlist, args = getopt.getopt(
             sys.argv[1:],
             'c:r:b:s:',
-            ['class=', 'race=', 'background=', 'statistics=', 'max-abilities', 'roll-four', 
+            ['class=', 'race=', 'background=', 'statistics=', 'max-abilities', 'roll-four',
              'roll-three', 'random-class', 'help'])
 
 except getopt.GetoptError as e:
@@ -60,11 +61,6 @@ for o, a in optlist:
         print('unhandled option: %s' % o)
 
 
-def roll(die):
-    """ Row a die sided die. """
-    return random.randint(1, die)
-
-
 def roll_attribute():
     """ Roll an attribute with four dice, dropping the lowest.
     Return the result followed by an ordered list of the rolls. """
@@ -83,13 +79,6 @@ def roll_attribute():
                 rolls[i] = roll(6)
             rolls = sorted(rolls)
             return sum(rolls[1:]), rolls
-
-
-def roll_from_list(lst):
-    """ Chose randomly an element of a given list. """
-    if lst == []:
-        return None
-    return lst[roll(len(lst)) - 1]
 
 
 def modifier(ability):
