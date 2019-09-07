@@ -1246,6 +1246,7 @@ class Character:
             print('- ' + trait)
 
 
+print('----------------------------------------')
 if chosen['statistics'] > 0:
     class_count_map = {cls.name: 0 for cls in classes}
     race_count_map = {race.name: 0 for race in races}
@@ -1306,3 +1307,4 @@ else:
         c = Character()
         c.generate_random_character()
         c.print_sheet()
+print('----------------------------------------')
