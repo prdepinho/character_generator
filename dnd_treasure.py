@@ -8,7 +8,46 @@
 
 from range_dict import RangeDict
 from dnd_dice import Dice, roll_from_list, roll
+import getopt
 import sys
+
+chosen = {
+        'hoard': False,
+        'personal': False,
+        'level': 0,
+        'quantity': 1
+        }
+
+try:
+    optlist, args = getopt.getopt(
+            sys.argv[1:],
+            'hpl:q:',
+            ['hoard', 'personal', 'level=', 'quantity=', 'help']
+            )
+except getopt.GetooptError as e:
+    print(e)
+    exit()
+
+for o, a in optlist:
+    if o in ['-h', '--hoard']:
+        chosen['hoard'] = True
+    elif o in ['-p', '--personal']:
+        chosen['personal'] = True
+    elif o in ['-l', '--level']:
+        chosen['level'] = int(a)
+        chosen['level'] = 20 if chosen['level'] > 20 else chosen['level']
+    elif o in ['-q', '--quantity']:
+        chosen['quantity'] = int(a)
+    elif o == '--help':
+        print('Help')
+        print('Exetute the program to generate a random personal or hoard treasure. The following options are available.')
+        print('%-40s %s' % ('-h, --hoard:', 'Roll a trasure hoard. This is the default.'))
+        print('%-40s %s' % ('-p, --personal:', 'Roll personal treasure. Use the --quantity with this option.'))
+        print('%-40s %s' % ('-l, --level [level]', 'Choose the challange level of the party or of the monster associated with the treasure. The default is 0.'))
+        print('%-40s %s' % ('-q, --quantity [quantity]', 'Choose the number of enemies to roll personal treasure. The default is 1.'))
+        exit()
+    else:
+        print('unhandled option: %s' % o)
 
 gemstones = {
     10: [
@@ -377,6 +416,46 @@ spellscroll = {
 
 }
 
+weapons = [
+    "Club",
+    "Dagger",
+    "Greatclub",
+    "Handaxe",
+    "javelin",
+    "Light hammer",
+    "Mace",
+    "Quarterstaff",
+    "Sickle",
+    "Spear",
+    "Crossbow, light",
+    "Dart",
+    "Shortbow",
+    "Sling",
+    "Battleaxe",
+    "Flail",
+    "Glaive",
+    "Greataxe",
+    "Greatsword",
+    "Halberd",
+    "Lance",
+    "Lingsword",
+    "Maul",
+    "Morningstar",
+    "Pike",
+    "Rapier",
+    "Scimitar",
+    "Shorsword",
+    "Trident",
+    "War pick",
+    "Warhammer",
+    "Whip",
+    "Blowgun",
+    "Crossbow, hand",
+    "Crossbow, heavy",
+    "Longbow",
+    "Net"
+]
+
 magicitems = {
     'a': RangeDict(),
     'b': RangeDict(),
@@ -495,7 +574,7 @@ magicitems['e'].set(86, 93, Item(name="Universal solvent"))
 magicitems['e'].set(94, 98, Item(name="Arrow of slaying"))
 magicitems['e'].set(99, 100, Item(name="Sovereign glue"))
 
-magicitems['f'].set(1, 15, Item(name="Weapon +1"))
+magicitems['f'].set(1, 15, Item(name="Weapon +1", complement_roll=lambda: roll_from_list(weapons)))
 magicitems['f'].set(16, 18, Item(name="Shield +1"))
 magicitems['f'].set(19, 21, Item(name="Sentinel shield"))
 magicitems['f'].set(22, 23, Item(name="Amulet of proof against detection and location"))
@@ -519,7 +598,7 @@ magicitems['f'].set(56, 57, Item(name="Trident of fish command"))
 magicitems['f'].set(58, 59, Item(name="Wand of magic missiles"))
 magicitems['f'].set(60, 61, Item(name="Wand of the war mage +1"))
 magicitems['f'].set(62, 63, Item(name="Wand of web"))
-magicitems['f'].set(64, 65, Item(name="Weapon of warning"))
+magicitems['f'].set(64, 65, Item(name="Weapon of warning", complement_roll=lambda: roll_from_list(weapons)))
 magicitems['f'].set(66, 66, Item(name="Adamantine armor (chain mail)"))
 magicitems['f'].set(67, 67, Item(name="Adamantine armor (chain shirt)"))
 magicitems['f'].set(68, 68, Item(name="Adamantine armor (scale mail)"))
@@ -565,7 +644,7 @@ figurine.set(5, 5, "Marble elephant")
 figurine.set(6, 7, "Onyx dog")
 figurine.set(8, 8, "Serpentine owl")
 
-magicitems['g'].set(1, 11, Item(name="Weapon +2"))
+magicitems['g'].set(1, 11, Item(name="Weapon +2", complement_roll=lambda: roll_from_list(weapons)))
 magicitems['g'].set(12, 14, Item(name="Figurine of wondrous power", complement_roll=lambda: figurine.get(Dice('d8'))))
 magicitems['g'].set(15, 15, Item(name="Adamantine armor (breastplate)"))
 magicitems['g'].set(16, 16, Item(name="Adamantine armor (splint)"))
@@ -643,7 +722,7 @@ magicitems['g'].set(87, 87, Item(name="Sun blade"))
 magicitems['g'].set(88, 88, Item(name="Sword of life stealing"))
 magicitems['g'].set(89, 89, Item(name="Sword of wounding"))
 magicitems['g'].set(90, 90, Item(name="Tentacle rod"))
-magicitems['g'].set(91, 91, Item(name="Vicious weapon"))
+magicitems['g'].set(91, 91, Item(name="Vicious weapon", complement_roll=lambda: roll_from_list(weapons)))
 magicitems['g'].set(92, 92, Item(name="Wand of binding"))
 magicitems['g'].set(93, 93, Item(name="Wand of enemy detection"))
 magicitems['g'].set(94, 94, Item(name="Wand of fear"))
@@ -654,7 +733,7 @@ magicitems['g'].set(98, 98, Item(name="Wand of the war mage +2"))
 magicitems['g'].set(99, 99, Item(name="Wand of wonder"))
 magicitems['g'].set(100, 100, Item(name="Wings of flying"))
 
-magicitems['h'].set(1, 10, Item(name="Weapon +3"))
+magicitems['h'].set(1, 10, Item(name="Weapon +3", complement_roll=lambda: roll_from_list(weapons)))
 magicitems['h'].set(11, 12, Item(name="Amulet of the planes"))
 magicitems['h'].set(13, 14, Item(name="Carpet of lying"))
 magicitems['h'].set(15, 16, Item(name="Crystal ball (very rare version)"))
@@ -923,11 +1002,56 @@ hoard_tiers[4].items.set(86, 90,  HoardItem(Dice("1d10"), artobjects[2500], Dice
 hoard_tiers[4].items.set(91, 95,  HoardItem(Dice("1d4"), artobjects[7500], Dice("1d4"), magicitems['i']))
 hoard_tiers[4].items.set(96, 100, HoardItem(Dice("1d8"), gemstones[5000], Dice("1d4"), magicitems['i']))
 
+
+class PersonalItem:
+    def __init__(self, cp, sp, ep, gp, pp):
+        self.cp = cp
+        self.sp = sp
+        self.ep = ep
+        self.gp = gp
+        self.pp = pp
+
+
+personal_tiers = {
+    1: RangeDict(),
+    2: RangeDict(),
+    3: RangeDict(),
+    4: RangeDict()
+}
+
+personal_tiers[1].set(1, 30, PersonalItem(cp=Dice('5d6'), sp=Dice(''), ep=Dice(''), gp=Dice(''), pp=Dice('')))
+personal_tiers[1].set(31, 60, PersonalItem(cp=Dice(''), sp=Dice('4d6'), ep=Dice(''), gp=Dice(''), pp=Dice('')))
+personal_tiers[1].set(61, 70, PersonalItem(cp=Dice(''), sp=Dice(''), ep=Dice('3d6'), gp=Dice(''), pp=Dice('')))
+personal_tiers[1].set(71, 95, PersonalItem(cp=Dice(''), sp=Dice(''), ep=Dice(''), gp=Dice('3d6'), pp=Dice('')))
+personal_tiers[1].set(96, 100, PersonalItem(cp=Dice(''), sp=Dice(''), ep=Dice(''), gp=Dice(''), pp=Dice('1d6')))
+
+personal_tiers[2].set(1, 30, PersonalItem(cp=Dice('4d6*100'), sp=Dice(''), ep=Dice('1d6*10'), gp=Dice(''), pp=Dice('')))
+personal_tiers[2].set(31, 60, PersonalItem(cp=Dice(''), sp=Dice('6d6*10'), ep=Dice(''), gp=Dice('2d6*10'), pp=Dice('')))
+personal_tiers[2].set(61, 70, PersonalItem(cp=Dice(''), sp=Dice(''), ep=Dice('3d6*10'), gp=Dice('2d6*10'), pp=Dice('')))
+personal_tiers[2].set(71, 95, PersonalItem(cp=Dice(''), sp=Dice(''), ep=Dice(''), gp=Dice('4d6*10'), pp=Dice('')))
+personal_tiers[2].set(96, 100, PersonalItem(cp=Dice(''), sp=Dice(''), ep=Dice(''), gp=Dice('2d6*10'), pp=Dice('3d6')))
+
+personal_tiers[3].set(1, 20, PersonalItem(cp=Dice(''), sp=Dice('4d6*100'), ep=Dice(''), gp=Dice('1d6*100'), pp=Dice('')))
+personal_tiers[3].set(21, 35, PersonalItem(cp=Dice(''), sp=Dice(''), ep=Dice('1d6*100'), gp=Dice('1d6*100'), pp=Dice('')))
+personal_tiers[3].set(36, 75, PersonalItem(cp=Dice(''), sp=Dice(''), ep=Dice(''), gp=Dice('2d6*100'), pp=Dice('1d6*10')))
+personal_tiers[3].set(76, 100, PersonalItem(cp=Dice(''), sp=Dice(''), ep=Dice(''), gp=Dice('2d6*100'), pp=Dice('2d6*10')))
+
+personal_tiers[4].set(1, 15, PersonalItem(cp=Dice(''), sp=Dice(''), ep=Dice('2d6*1000'), gp=Dice('8d6*100'), pp=Dice('')))
+personal_tiers[4].set(16, 55, PersonalItem(cp=Dice(''), sp=Dice(''), ep=Dice(''), gp=Dice('1d6*1000'), pp=Dice('1d6*100')))
+personal_tiers[4].set(56, 100, PersonalItem(cp=Dice(''), sp=Dice(''), ep=Dice(''), gp=Dice('1d6*1000'), pp=Dice('2d6*100')))
+
+
 hoard = RangeDict()
 hoard.set(0, 4, hoard_tiers[1])
 hoard.set(5, 10, hoard_tiers[2])
 hoard.set(11, 16, hoard_tiers[3])
 hoard.set(17, 20, hoard_tiers[4])
+
+personal = RangeDict()
+personal.set(0, 4, personal_tiers[1])
+personal.set(5, 10, personal_tiers[2])
+personal.set(11, 16, personal_tiers[3])
+personal.set(17, 20, personal_tiers[4])
 
 
 def get_gem_price(gem):
@@ -940,65 +1064,102 @@ def get_gem_price(gem):
     return -1
 
 
-# roll treasure
+def generate_trasure_hoard(level):
+    # roll treasure
+    cp = 0
+    sp = 0
+    ep = 0
+    gp = 0
+    pp = 0
+    gems_quantity = 0
+    gems_name = ""
+    gem_price = 0
+    magic = []
 
-cp = 0
-sp = 0
-ep = 0
-gp = 0
-pp = 0
-gems_quantity = 0
-gems_name = ""
-gem_price = 0
-magic = []
+    chosen_hoard = hoard.get(level)
 
-level = int(sys.argv[1]) if len(sys.argv) > 1 else 0
-level = 20 if level > 20 else level
+    cp = chosen_hoard.cp.roll()
+    sp = chosen_hoard.sp.roll()
+    ep = chosen_hoard.ep.roll()
+    gp = chosen_hoard.gp.roll()
+    pp = chosen_hoard.pp.roll()
 
-chosen_hoard = hoard.get(level)
+    dice = Dice("d100")
+    hoard_item = chosen_hoard.items.get(dice.roll())
+    hoard_item_roll = dice.rolls
 
-cp = chosen_hoard.cp.roll()
-sp = chosen_hoard.sp.roll()
-ep = chosen_hoard.ep.roll()
-gp = chosen_hoard.gp.roll()
-pp = chosen_hoard.pp.roll()
+    gems_quantity = hoard_item.gems_dice.roll()
+    if gems_quantity > 0:
+        gems_name = roll_from_list(hoard_item.gems)
+        gem_price = get_gem_price(gems_name)
 
-dice = Dice("d100")
-hoard_item = chosen_hoard.items.get(dice.roll())
-hoard_item_roll = dice.rolls
+    magic_quantity = hoard_item.magic_dice.roll()
+    for i in range(magic_quantity):
+        magic.append(hoard_item.magic.get(roll(100)))
 
-gems_quantity = hoard_item.gems_dice.roll()
-if gems_quantity > 0:
-    gems_name = roll_from_list(hoard_item.gems)
-    gem_price = get_gem_price(gems_name)
+    magic_quantity = hoard_item.magic2_dice.roll()
+    for i in range(magic_quantity):
+        magic.append(hoard_item.magic2.get(roll(100)))
 
-magic_quantity = hoard_item.magic_dice.roll()
-for i in range(magic_quantity):
-    magic.append(hoard_item.magic.get(roll(100)))
+    # print treasure
 
-magic_quantity = hoard_item.magic2_dice.roll()
-for i in range(magic_quantity):
-    magic.append(hoard_item.magic2.get(roll(100)))
+    print("Treasure Hoard level: %d (rolled: %s)" % (level, hoard_item_roll))
+    print("Coins:")
+    print("  cp: %d" % cp)
+    print("  sp: %d" % sp)
+    print("  ep: %d" % ep)
+    print("  gp: %d" % gp)
+    print("  pp: %d" % pp)
 
-# print treasure
+    if gems_quantity > 0:
+        print("Gems or Art objecs:")
+        print("  %d %s (%d gp each)" % (gems_quantity, gems_name, gem_price))
+
+    if len(magic) > 0:
+        print("Magic Items:")
+        for item in magic:
+            name = item.name
+            complement = item.complement_roll()
+            print("  %s%s" % (name, ": "+complement if complement != "" else ""))
+
+
+def generate_personal_treasure(level, quantity):
+    # roll treasure
+    cp = 0
+    sp = 0
+    ep = 0
+    gp = 0
+    pp = 0
+
+    chosen_personal = personal.get(level)
+
+    for i in range(quantity):
+        dice = Dice('d100')
+        personal_item = chosen_personal.get(dice.roll())
+
+        cp += personal_item.cp.roll()
+        sp += personal_item.sp.roll()
+        ep += personal_item.ep.roll()
+        gp += personal_item.gp.roll()
+        pp += personal_item.pp.roll()
+
+    # print treasure
+    print("Personal Treasure level: %d, quantity: %d" % (level, quantity))
+    print("Coins:")
+    print("  cp: %d" % cp)
+    print("  sp: %d" % sp)
+    print("  ep: %d" % ep)
+    print("  gp: %d" % gp)
+    print("  pp: %d" % pp)
+
+
+if (chosen['hoard'] or chosen['personal']) is False:
+    chosen['hoard'] = True
 
 print("----------")
-print("Treasure level: %d (rolled: %s)" % (level, hoard_item_roll))
-print("Coins:")
-print("  cp: %d" % cp)
-print("  sp: %d" % sp)
-print("  ep: %d" % ep)
-print("  gp: %d" % gp)
-print("  pp: %d" % pp)
+if chosen['hoard']:
+    generate_trasure_hoard(chosen['level'])
 
-if gems_quantity > 0:
-    print("Gems or Art objecs:")
-    print("  %d %s (%d gp each)" % (gems_quantity, gems_name, gem_price))
-
-if len(magic) > 0:
-    print("Magic Items:")
-    for item in magic:
-        name = item.name
-        complement = item.complement_roll()
-        print("  %s%s" % (name, ": "+complement if complement != "" else ""))
+elif chosen['personal']:
+    generate_personal_treasure(chosen['level'], chosen['quantity'])
 print("----------")
