@@ -49,17 +49,21 @@ Treasure generator generates treasure according to the party or a monster
 challange level. The following options are available:
 
 -h --hoard: Generate a treasure hoard.
+
 -p --personal: Generate personal treasure.
+
 -l --level \<level\>: Set the challenge level of the party or of the monster associated with the treasure.
+
 -q --quantity \<quantity\>: Set the number of monsters to calculate personal treasure.
 
 ## Examples:
+
 - Generate a hoard for a party of challange level 11:
 ```
 py dnd_treasure.py --hoard --level 11
 ```
 
--- Generate the personal treasure for a party of 5 monsters of challange level 15:
+- Generate the personal treasure for a party of 5 monsters of challange level 15:
 ```
 py dnd_treasure.py --personal --level 15 --quantity 5
 ```
