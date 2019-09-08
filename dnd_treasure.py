@@ -45,6 +45,7 @@ for o, a in optlist:
         print('%-40s %s' % ('-p, --personal:', 'Roll personal treasure. Use the --quantity with this option.'))
         print('%-40s %s' % ('-l, --level [level]', 'Choose the challange level of the party or of the monster associated with the treasure. The default is 0.'))
         print('%-40s %s' % ('-q, --quantity [quantity]', 'Choose the number of enemies to roll personal treasure. The default is 1.'))
+        print("Please, run the hoard twice if the monster that possessed it was legendary.")
         exit()
     else:
         print('unhandled option: %s' % o)
