@@ -1,5 +1,6 @@
 
 from range_dict import RangeDict
+from dnd_treasure import generate_personal_treasure
 from dnd_dice import Dice, roll_from_list, roll
 import statistics
 import getopt
@@ -53,47 +54,48 @@ chosen = {
         'monsters': -1
         }
 
-try:
-    optlist, args = getopt.getopt(
-            sys.argv[1:],
-            'd:l:m:e:',
-            ['difficulty=', 'pc-levels=', 'monsters=', 'environment=', 'help']
-            )
-except getopt.GetooptError as e:
-    print(e)
-    exit()
-
-for o, a in optlist:
-    if o in ['-d', '--difficulty']:
-        chosen['difficulty'] = a.lower()
-        if chosen['difficulty'] not in ['easy', 'medium', 'hard', 'deadly']:
-            print('Difficulty options: easy, medium, hard, deadly.')
-            exit()
-    elif o in ['-l', '--pc-levels']:
-        chosen['pc-levels'] = [int(n) for n in a.split(' ')]
-    elif o in ['-m', '--monsters']:
-        if a.isdigit():
-            chosen['monsters'] = int(a)
-        else:
-            chosen['monsters'] = Dice(a).roll()
-        if chosen['monsters'] > 20:
-            print('At most 20 monsters are permitted')
-            exit()
-    elif o in ['-e', '--environment']:
-        chosen['environment'] = a.lower()
-        if chosen['environment'] not in environments:
-            print('Environment options are: %s.' % str(environments))
-            exit()
-    elif o == '--help':
-        print('Help')
-        print('Exetute the program to generate a random encounter. The following options are available.')
-        print('%-40s %s' % ('-d, --difficulty: [difficulty]', 'The difficulty of the encounter. The options are easy, medium, hard and deadly. The default is medium.'))
-        print('%-40s %s' % ('-l, --pc-levels "level1 level2..."', 'A space separated list of player character levels. Surround the list with double quotes.'))
-        print('%-40s %s' % ('-m, --monsters [number]', 'The number of monsters in the encounter. This may be represented in the dice notation, like 2d4+1, or as a number. If no value is specified, the size of the encounter is going to vary.'))
-        print('%-40s %s' % ('-e, --environment [env]', 'The kind of environment in which the encounter takes place. If none is specified, a random one is chosen. Options are: %s.' % str(environments)))
+if __name__ == "__main__":
+    try:
+        optlist, args = getopt.getopt(
+                sys.argv[1:],
+                'd:l:m:e:',
+                ['difficulty=', 'pc-levels=', 'monsters=', 'environment=', 'help']
+                )
+    except getopt.GetooptError as e:
+        print(e)
         exit()
-    else:
-        print('unhandled option: %s' % o)
+
+    for o, a in optlist:
+        if o in ['-d', '--difficulty']:
+            chosen['difficulty'] = a.lower()
+            if chosen['difficulty'] not in ['easy', 'medium', 'hard', 'deadly']:
+                print('Difficulty options: easy, medium, hard, deadly.')
+                exit()
+        elif o in ['-l', '--pc-levels']:
+            chosen['pc-levels'] = [int(n) for n in a.split(' ')]
+        elif o in ['-m', '--monsters']:
+            if a.isdigit():
+                chosen['monsters'] = int(a)
+            else:
+                chosen['monsters'] = Dice(a).roll()
+            if chosen['monsters'] > 20:
+                print('At most 20 monsters are permitted')
+                exit()
+        elif o in ['-e', '--environment']:
+            chosen['environment'] = a.lower()
+            if chosen['environment'] not in environments:
+                print('Environment options are: %s.' % str(environments))
+                exit()
+        elif o == '--help':
+            print('Help')
+            print('Exetute the program to generate a random encounter. The following options are available.')
+            print('%-40s %s' % ('-d, --difficulty: [difficulty]', 'The difficulty of the encounter. The options are easy, medium, hard and deadly. The default is medium.'))
+            print('%-40s %s' % ('-l, --pc-levels "level1 level2..."', 'A space separated list of player character levels. Surround the list with double quotes.'))
+            print('%-40s %s' % ('-m, --monsters [number]', 'The number of monsters in the encounter. This may be represented in the dice notation, like 2d4+1, or as a number. If no value is specified, the size of the encounter is going to vary.'))
+            print('%-40s %s' % ('-e, --environment [env]', 'The kind of environment in which the encounter takes place. If none is specified, a random one is chosen. Options are: %s.' % str(environments)))
+            exit()
+        else:
+            print('unhandled option: %s' % o)
 
 threshold = {
         "easy": {
@@ -1121,44 +1123,49 @@ def choose_monsters(budget, monster_pool, number_monsters=-1):
     return population[0]['monsters']
 
 
-print("----------")
-if len(chosen['pc-levels']) > 0:
-    difficulty = chosen['difficulty']
-    pc_levels = chosen['pc-levels']
-    number_monsters = chosen['monsters']
-    party_avarage_level = statistics.mean(pc_levels)
-    party_threshold = get_party_threshold(pc_levels, difficulty)
+if __name__ == "__main__":
+    print("----------")
+    if len(chosen['pc-levels']) > 0:
+        difficulty = chosen['difficulty']
+        pc_levels = chosen['pc-levels']
+        number_monsters = chosen['monsters']
+        party_avarage_level = statistics.mean(pc_levels)
+        party_threshold = get_party_threshold(pc_levels, difficulty)
 
-    print("Difficulty: %s" % difficulty)
-    print('Character levels: %s (mean: %.2f)' % (str(pc_levels), party_avarage_level))
-    print('Party xp threshold: %d' % (party_threshold))
+        print("Difficulty: %s" % difficulty)
+        print('Character levels: %s (avarage: %.2f)' % (str(pc_levels), party_avarage_level))
+        print('Party xp threshold: %d' % (party_threshold))
 
-    environment = chosen['environment']
-    monsters = choose_monsters(party_threshold, monsters[environment], number_monsters)
-    number_monsters = len(monsters)
-    multiplier = encounter_multiplier.get(number_monsters)
+        environment = chosen['environment']
+        monsters = choose_monsters(party_threshold, monsters[environment], number_monsters)
+        number_monsters = len(monsters)
+        multiplier = encounter_multiplier.get(number_monsters)
 
-    print('Monsters: %d (x%.1f xp)' % (number_monsters, multiplier))
-    print('')
-    print('Monsters: %d (%s)' % (len(monsters), environment))
-    total_monster_xp = 0
-    monsters.sort(reverse=True, key=lambda m: m.cl)
-    for monster in monsters:
-        warning = monster.cl > party_avarage_level
-        print('  %-40s cl: %-5s xp: %-10d %s' % (
-            monster.name,
-            ("1/8" if monster.cl == 1/8 else ("1/4" if monster.cl == 1/4 else ("1/2" if monster.cl == 1/2 else str(monster.cl)))) + ",",
-            monster.xp,
-            ("(Warning: Monster is significantly stronger than party)" if warning else "")))
-        total_monster_xp += monster.xp
-    print('')
-    print('Total encounter xp: %-10d (reward this to the PCs)' % (total_monster_xp))
-    print('Modified encounter xp: %-7d %s' % (
-        total_monster_xp * multiplier,
-        ("(Warning. The enconter does not match the party's xp threshold)"
-            if abs(total_monster_xp * multiplier - party_threshold) > (party_threshold / 25) else "")))
+        print('Monsters: %d (x%.1f xp)' % (number_monsters, multiplier))
+        print('')
+        print('Monsters: %d (%s)' % (len(monsters), environment))
+        total_monster_xp = 0
+        monsters.sort(reverse=True, key=lambda m: m.cl)
+        for monster in monsters:
+            warning = monster.cl > party_avarage_level
+            print('  %-40s cl: %-5s xp: %-10d %s' % (
+                monster.name,
+                ("1/8" if monster.cl == 1/8 else ("1/4" if monster.cl == 1/4 else ("1/2" if monster.cl == 1/2 else str(monster.cl)))) + ",",
+                monster.xp,
+                ("(Warning: Monster is significantly stronger than party)" if warning else "")))
+            total_monster_xp += monster.xp
+        print('')
+        print('Total encounter xp: %-10d (reward %d to each PC)' % (total_monster_xp, total_monster_xp / len(pc_levels)))
+        print('Modified encounter xp: %-7d %s' % (
+            total_monster_xp * multiplier,
+            ("(Warning. The enconter does not match the party's xp threshold)"
+                if abs(total_monster_xp * multiplier - party_threshold) > (party_threshold / 25) else "")))
+
+        print('')
+        print('Treasure:')
+        generate_personal_treasure(int(party_avarage_level), number_monsters)
 
 
-else:
-    print('Please, specify the pc-levels option. See --help for details.')
-print("----------")
+    else:
+        print('Please, specify the pc-levels option. See --help for details.')
+    print("----------")

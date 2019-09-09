@@ -11,44 +11,45 @@ from dnd_dice import Dice, roll_from_list, roll
 import getopt
 import sys
 
-chosen = {
-        'hoard': False,
-        'personal': False,
-        'level': 0,
-        'quantity': 1
-        }
+if __name__ == "__main__":
+    chosen = {
+            'hoard': False,
+            'personal': False,
+            'level': 0,
+            'quantity': 1
+            }
 
-try:
-    optlist, args = getopt.getopt(
-            sys.argv[1:],
-            'hpl:q:',
-            ['hoard', 'personal', 'level=', 'quantity=', 'help']
-            )
-except getopt.GetooptError as e:
-    print(e)
-    exit()
-
-for o, a in optlist:
-    if o in ['-h', '--hoard']:
-        chosen['hoard'] = True
-    elif o in ['-p', '--personal']:
-        chosen['personal'] = True
-    elif o in ['-l', '--level']:
-        chosen['level'] = int(a)
-        chosen['level'] = 20 if chosen['level'] > 20 else chosen['level']
-    elif o in ['-q', '--quantity']:
-        chosen['quantity'] = int(a)
-    elif o == '--help':
-        print('Help')
-        print('Exetute the program to generate a random personal or hoard treasure. The following options are available.')
-        print('%-40s %s' % ('-h, --hoard:', 'Roll a trasure hoard. This is the default.'))
-        print('%-40s %s' % ('-p, --personal:', 'Roll personal treasure. Use the --quantity with this option.'))
-        print('%-40s %s' % ('-l, --level [level]', 'Choose the challange level of the party or of the monster associated with the treasure. The default is 0.'))
-        print('%-40s %s' % ('-q, --quantity [quantity]', 'Choose the number of enemies to roll personal treasure. The default is 1.'))
-        print("Please, run the hoard twice if the monster that possessed it was legendary.")
+    try:
+        optlist, args = getopt.getopt(
+                sys.argv[1:],
+                'hpl:q:',
+                ['hoard', 'personal', 'level=', 'quantity=', 'help']
+                )
+    except getopt.GetooptError as e:
+        print(e)
         exit()
-    else:
-        print('unhandled option: %s' % o)
+
+    for o, a in optlist:
+        if o in ['-h', '--hoard']:
+            chosen['hoard'] = True
+        elif o in ['-p', '--personal']:
+            chosen['personal'] = True
+        elif o in ['-l', '--level']:
+            chosen['level'] = int(a)
+            chosen['level'] = 20 if chosen['level'] > 20 else chosen['level']
+        elif o in ['-q', '--quantity']:
+            chosen['quantity'] = int(a)
+        elif o == '--help':
+            print('Help')
+            print('Exetute the program to generate a random personal or hoard treasure. The following options are available.')
+            print('%-40s %s' % ('-h, --hoard:', 'Roll a trasure hoard. This is the default.'))
+            print('%-40s %s' % ('-p, --personal:', 'Roll personal treasure. Use the --quantity with this option.'))
+            print('%-40s %s' % ('-l, --level [level]', 'Choose the challange level of the party or of the monster associated with the treasure. The default is 0.'))
+            print('%-40s %s' % ('-q, --quantity [quantity]', 'Choose the number of enemies to roll personal treasure. The default is 1.'))
+            print("Please, run the hoard twice if the monster that possessed it was legendary.")
+            exit()
+        else:
+            print('unhandled option: %s' % o)
 
 gemstones = {
     10: [
@@ -1154,13 +1155,14 @@ def generate_personal_treasure(level, quantity):
     print("  pp: %d" % pp)
 
 
-if (chosen['hoard'] or chosen['personal']) is False:
-    chosen['hoard'] = True
+if __name__ == "__main__":
+    if (chosen['hoard'] or chosen['personal']) is False:
+        chosen['hoard'] = True
 
-print("----------")
-if chosen['hoard']:
-    generate_trasure_hoard(chosen['level'])
+    print("----------")
+    if chosen['hoard']:
+        generate_trasure_hoard(chosen['level'])
 
-elif chosen['personal']:
-    generate_personal_treasure(chosen['level'], chosen['quantity'])
-print("----------")
+    elif chosen['personal']:
+        generate_personal_treasure(chosen['level'], chosen['quantity'])
+    print("----------")
