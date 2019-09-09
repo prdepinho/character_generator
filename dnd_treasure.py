@@ -36,7 +36,7 @@ if __name__ == "__main__":
             chosen['personal'] = True
         elif o in ['-l', '--level']:
             chosen['level'] = int(a)
-            chosen['level'] = 20 if chosen['level'] > 20 else chosen['level']
+            chosen['level'] = 30 if chosen['level'] > 30 else chosen['level']
         elif o in ['-q', '--quantity']:
             chosen['quantity'] = int(a)
         elif o == '--help':
@@ -647,7 +647,7 @@ figurine.set(6, 7, "Onyx dog")
 figurine.set(8, 8, "Serpentine owl")
 
 magicitems['g'].set(1, 11, Item(name="Weapon +2", complement_roll=lambda: roll_from_list(weapons)))
-magicitems['g'].set(12, 14, Item(name="Figurine of wondrous power", complement_roll=lambda: figurine.get(Dice('d8'))))
+magicitems['g'].set(12, 14, Item(name="Figurine of wondrous power", complement_roll=lambda: figurine.get(Dice('d8').roll())))
 magicitems['g'].set(15, 15, Item(name="Adamantine armor (breastplate)"))
 magicitems['g'].set(16, 16, Item(name="Adamantine armor (splint)"))
 magicitems['g'].set(17, 17, Item(name="Amulet of health"))
@@ -842,7 +842,7 @@ magicitems['i'].set(68, 69, Item(name="Scarab of protection"))
 magicitems['i'].set(70, 71, Item(name="Armor +2 (splint)"))
 magicitems['i'].set(72, 73, Item(name="Armor +2 (studded leather)"))
 magicitems['i'].set(74, 75, Item(name="Well of many worlds"))
-magicitems['i'].set(76, 76, Item(name="Magic Armor", complement_roll=lambda: magicarmor.get(Dice('d12'))))
+magicitems['i'].set(76, 76, Item(name="Magic Armor", complement_roll=lambda: magicarmor.get(Dice('d12').roll())))
 magicitems['i'].set(77, 77, Item(name="Apparatus of Kwalish"))
 magicitems['i'].set(78, 78, Item(name="Armor of inbulnerability"))
 magicitems['i'].set(79, 79, Item(name="Belt of storm giant strength"))
@@ -1047,13 +1047,13 @@ hoard = RangeDict()
 hoard.set(0, 4, hoard_tiers[1])
 hoard.set(5, 10, hoard_tiers[2])
 hoard.set(11, 16, hoard_tiers[3])
-hoard.set(17, 20, hoard_tiers[4])
+hoard.set(17, 30, hoard_tiers[4])
 
 personal = RangeDict()
 personal.set(0, 4, personal_tiers[1])
 personal.set(5, 10, personal_tiers[2])
 personal.set(11, 16, personal_tiers[3])
-personal.set(17, 20, personal_tiers[4])
+personal.set(17, 30, personal_tiers[4])
 
 
 def get_gem_price(gem):
