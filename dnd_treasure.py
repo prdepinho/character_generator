@@ -1119,6 +1119,7 @@ def generate_trasure_hoard(level):
 
     if len(magic) > 0:
         print("Magic Items:")
+        magic.sort(key=lambda i: i.name)
         for item in magic:
             name = item.name
             complement = item.complement_roll()
