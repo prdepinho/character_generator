@@ -81,6 +81,7 @@ It has the following options:
 -l --pc-levels: As list separated by space of the level for each player character. Enclose the list in double quotes.
 
 -m --monsters: The number of monsters in the encounter. It may be either in dice notation or as a number.
+If not specified, the size of the encounter will vary.
 
 -e --environment: The environment from which to choose the monsters. If this is not specified, a random environment is selected.
 The options are: arctic, coastal, desert, forest, grassland, hill, mountain, swamp, underdark, underwater, urban.
@@ -96,7 +97,12 @@ with discression.
 
 ## Examples:
 
+- Genarate a deadly encounter for a party of levels 5, 5, 4 and 3.
+```
+py dnd_encounter.py --pc-levels "5 5 4 3" --difficulty deadly
+```
+
 - Generate a medium encounter with 1d4 forest monsters for a party of levels 1, 1, 2 and 3.
 ```
-py dnd_encounter.py --difficulty medium --monsters 1d4 --pc-levels "1 1 2 3" --environment forest
+py dnd_encounter.py --pc-levels "1 1 2 3" --environment forest --monsters 1d4 --difficulty medium
 ```
