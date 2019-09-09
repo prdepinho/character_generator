@@ -1120,6 +1120,7 @@ def choose_monsters(budget, monster_pool, number_monsters=-1):
                 population[p]['monsters'].append(roll_from_list(monster_pool))
             population[p]['key'] = abs(budget - sum([monster.xp for monster in population[p]['monsters']]) * encounter_multiplier.get(encounter_size))
 
+    population.sort(key=lambda p: p['key'])
     return population[0]['monsters']
 
 
@@ -1164,7 +1165,6 @@ if __name__ == "__main__":
         print('')
         print('Treasure:')
         generate_personal_treasure(int(party_avarage_level), number_monsters)
-
 
     else:
         print('Please, specify the pc-levels option. See --help for details.')
