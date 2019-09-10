@@ -1,6 +1,6 @@
 
 from range_dict import RangeDict
-from dnd_treasure import generate_personal_treasure, print_personal, generate_treasure_hoard, print_hoard
+from dnd_treasure import generate_personal_treasure, print_personal, generate_treasure_hoard
 from dnd_dice import Dice, roll_from_list, roll
 import statistics
 import getopt
@@ -228,6 +228,13 @@ challange_xp_map = {
         }
 
 
+short_party_multiplier = RangeDict()
+short_party_multiplier.set(1,  1,   1.5)
+short_party_multiplier.set(2,  2,   2)
+short_party_multiplier.set(3,  6,   2.5)
+short_party_multiplier.set(7,  10,  3)
+short_party_multiplier.set(11, 100,  4)
+
 encounter_multiplier = RangeDict()
 encounter_multiplier.set(1,  1,   1)
 encounter_multiplier.set(2,  2,   1.5)
@@ -235,6 +242,22 @@ encounter_multiplier.set(3,  6,   2)
 encounter_multiplier.set(7,  10,  2.5)
 encounter_multiplier.set(11, 14,  3)
 encounter_multiplier.set(15, 100, 4)
+
+large_party_multiplier = RangeDict()
+large_party_multiplier.set(1,  2,   1)
+large_party_multiplier.set(3,  6,   1.5)
+large_party_multiplier.set(7,  10,  2)
+large_party_multiplier.set(11, 14,  2.5)
+large_party_multiplier.set(15, 100, 3)
+
+
+def get_encounter_multiplier(party_size, monsters_size):
+    if party_size <= 2:
+        return short_party_multiplier.get(monsters_size)
+    elif party_size in [3, 4, 5]:
+        return encounter_multiplier.get(monsters_size)
+    elif party_size >= 6:
+        return large_party_multiplier.get(monsters_size)
 
 
 class Monster:
@@ -1097,7 +1120,7 @@ def get_party_threshold(pc_levels, difficulty):
     return sum([threshold[difficulty][level] for level in pc_levels])
 
 
-def choose_monsters(budget, monster_pool, number_monsters=-1):
+def choose_monsters(budget, party_size, monster_pool, number_monsters=-1):
     """ A simple genetic algorithm to choose monsters. """
     generations = 100
     total_population = 100
@@ -1110,7 +1133,7 @@ def choose_monsters(budget, monster_pool, number_monsters=-1):
         encounter_size = number_monsters if number_monsters > 0 else roll(20)
         for _ in range(encounter_size):
             population[p]['monsters'].append(roll_from_list(monster_pool))
-        population[p]['key'] = abs(budget - sum([monster.xp for monster in population[p]['monsters']]) * encounter_multiplier.get(encounter_size))
+        population[p]['key'] = abs(budget - sum([monster.xp for monster in population[p]['monsters']]) * get_encounter_multiplier(party_size, encounter_size))
 
     # start generations
     for generation in range(generations):
@@ -1126,7 +1149,7 @@ def choose_monsters(budget, monster_pool, number_monsters=-1):
             encounter_size = number_monsters if number_monsters > 0 else roll(20)
             for _ in range(encounter_size):
                 population[p]['monsters'].append(roll_from_list(monster_pool))
-            population[p]['key'] = abs(budget - sum([monster.xp for monster in population[p]['monsters']]) * encounter_multiplier.get(encounter_size))
+            population[p]['key'] = abs(budget - sum([monster.xp for monster in population[p]['monsters']]) * get_encounter_multiplier(party_size, encounter_size))
 
     population.sort(key=lambda p: p['key'])
     return population[0]['monsters']
@@ -1142,17 +1165,19 @@ if __name__ == "__main__":
         party_threshold = get_party_threshold(pc_levels, difficulty)
 
         print("Difficulty: %s" % difficulty)
-        print('Character levels: %s (avarage: %.2f)' % (str(pc_levels), party_avarage_level))
+        print('Character levels: %s (avarage: %.2f) %s' % (
+            str(pc_levels),
+            party_avarage_level,
+            ("(Small party)" if len(pc_levels) <= 2 else ("(Large party)" if len(pc_levels) >= 6 else ""))))
         print('Party xp threshold: %d' % (party_threshold))
 
         environment = chosen['environment']
-        monsters = choose_monsters(party_threshold, monsters[environment], number_monsters)
+        monsters = choose_monsters(party_threshold, len(pc_levels), monsters[environment], number_monsters)
         number_monsters = len(monsters)
-        multiplier = encounter_multiplier.get(number_monsters)
+        multiplier = get_encounter_multiplier(len(pc_levels), number_monsters)
 
-        print('Monsters: %d (x%.1f xp)' % (number_monsters, multiplier))
         print('')
-        print('Monsters: %d (%s)' % (len(monsters), environment))
+        print('Monsters: %d (x%.1f xp) (%s)' % (number_monsters, multiplier, environment))
         total_monster_xp = 0
         monsters.sort(reverse=True, key=lambda m: m.cl)
         for monster in monsters:
