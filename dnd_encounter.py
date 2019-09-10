@@ -1188,7 +1188,7 @@ if __name__ == "__main__":
                     "cp": 0, "sp": 0, "ep": 0, "gp": 0, "pp": 0, "magic": [],
                     "gems_quantity": [], "gems_name": [], "gem_price": [], 'hoard_item_roll': []}
             for _ in range(2 if any([m.legendary for m in monsters]) else 1):
-                treasure = generate_treasure_hoard(monsters[0].cl)
+                treasure = generate_treasure_hoard(monsters[0].cl if monsters[0].cl >= 1 else 0)
 
                 hoard['hoard_item_roll'].append(treasure['hoard_item_roll'])
                 hoard['gems_quantity'].append(treasure['gems_quantity'])
