@@ -1066,7 +1066,7 @@ def get_gem_price(gem):
     return -1
 
 
-def generate_trasure_hoard(level):
+def generate_treasure_hoard(level):
     # roll treasure
     cp = 0
     sp = 0
@@ -1103,20 +1103,29 @@ def generate_trasure_hoard(level):
     for i in range(magic_quantity):
         magic.append(hoard_item.magic2.get(roll(100)))
 
-    # print treasure
+    return {
+            "hoard_item_roll": hoard_item_roll,
+            "cp": cp, "sp": sp, "ep": ep, "gp": gp, "pp": pp,
+            "gems_name": gems_name,
+            "gems_quantity": gems_quantity,
+            "gem_price": gem_price,
+            "magic": magic
+            }
 
-    print("Treasure Hoard level: %d (rolled: %s)" % (level, hoard_item_roll))
+
+def print_hoard(treasure):
     print("Coins:")
-    print("  cp: %d" % cp)
-    print("  sp: %d" % sp)
-    print("  ep: %d" % ep)
-    print("  gp: %d" % gp)
-    print("  pp: %d" % pp)
+    print("  cp: %d" % treasure['cp'])
+    print("  sp: %d" % treasure['sp'])
+    print("  ep: %d" % treasure['ep'])
+    print("  gp: %d" % treasure['gp'])
+    print("  pp: %d" % treasure['pp'])
 
-    if gems_quantity > 0:
+    if treasure['gems_quantity'] > 0:
         print("Gems or Art objecs:")
-        print("  %d %s (%d gp each)" % (gems_quantity, gems_name, gem_price))
+        print("  %d %s (%d gp each)" % (treasure['gems_quantity'], treasure['gems_name'], treasure['gem_price']))
 
+    magic = treasure['magic']
     if len(magic) > 0:
         print("Magic Items:")
         magic.sort(key=lambda i: i.name)
@@ -1126,7 +1135,7 @@ def generate_trasure_hoard(level):
             print("  %s%s" % (name, ": "+complement if complement != "" else ""))
 
 
-def generate_personal_treasure(level, quantity):
+def generate_personal_treasure(level, quantity=1):
     # roll treasure
     cp = 0
     sp = 0
@@ -1146,14 +1155,16 @@ def generate_personal_treasure(level, quantity):
         gp += personal_item.gp.roll()
         pp += personal_item.pp.roll()
 
-    # print treasure
-    print("Personal Treasure level: %d, quantity: %d" % (level, quantity))
+    return {"cp": cp, "sp": sp, "ep": ep, "gp": gp, "pp": pp}
+
+
+def print_personal(treasure):
     print("Coins:")
-    print("  cp: %d" % cp)
-    print("  sp: %d" % sp)
-    print("  ep: %d" % ep)
-    print("  gp: %d" % gp)
-    print("  pp: %d" % pp)
+    print("  cp: %d" % treasure['cp'])
+    print("  sp: %d" % treasure['sp'])
+    print("  ep: %d" % treasure['ep'])
+    print("  gp: %d" % treasure['gp'])
+    print("  pp: %d" % treasure['pp'])
 
 
 if __name__ == "__main__":
@@ -1162,8 +1173,12 @@ if __name__ == "__main__":
 
     print("----------")
     if chosen['hoard']:
-        generate_trasure_hoard(chosen['level'])
+        treasure = generate_treasure_hoard(chosen['level'])
+        print("Treasure Hoard level: %d (rolled: %s)" % (chosen['level'], treasure['hoard_item_roll']))
+        print_hoard(treasure)
 
     elif chosen['personal']:
-        generate_personal_treasure(chosen['level'], chosen['quantity'])
+        treasure = generate_personal_treasure(chosen['level'], chosen['quantity'])
+        print("Personal Treasure level: %d, quantity: %d" % (chosen['level'], chosen['quantity']))
+        print_personal(treasure)
     print("----------")

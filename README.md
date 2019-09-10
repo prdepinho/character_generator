@@ -86,6 +86,11 @@ If not specified, the size of the encounter will vary.
 -e --environment: The environment from which to choose the monsters. If this is not specified, a random environment is selected.
 The options are: arctic, coastal, desert, forest, grassland, hill, mountain, swamp, underdark, underwater, urban.
 
+-t --treasure: The type of treasure the monsters carry. Options are personal
+and hoard. The personal treasure is rolled for each monster. The hoard is
+rolled for the highest level monster, twice if it is legendary. If this option
+is not set, no treasure is generated.
+
 It is possible that the program won't be able to generate an encounter
 sufficiently challanging for the number of monsters specified. In this case,
 re-execute the program with more enemies until the encounter's xp threshold

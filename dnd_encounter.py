@@ -1,6 +1,6 @@
 
 from range_dict import RangeDict
-from dnd_treasure import generate_personal_treasure
+from dnd_treasure import generate_personal_treasure, print_personal, generate_treasure_hoard, print_hoard
 from dnd_dice import Dice, roll_from_list, roll
 import statistics
 import getopt
@@ -51,15 +51,16 @@ chosen = {
         'difficulty': 'medium',
         'pc-levels': [],
         'environment': roll_from_list(environments),
-        'monsters': -1
+        'monsters': -1,
+        'treasure': ''
         }
 
 if __name__ == "__main__":
     try:
         optlist, args = getopt.getopt(
                 sys.argv[1:],
-                'd:l:m:e:',
-                ['difficulty=', 'pc-levels=', 'monsters=', 'environment=', 'help']
+                'd:l:m:e:t:',
+                ['difficulty=', 'pc-levels=', 'monsters=', 'environment=', 'treasure=', 'help']
                 )
     except getopt.GetooptError as e:
         print(e)
@@ -86,6 +87,11 @@ if __name__ == "__main__":
             if chosen['environment'] not in environments:
                 print('Environment options are: %s.' % str(environments))
                 exit()
+        elif o in ['-t', '--treasure']:
+            chosen['treasure'] = a
+            if chosen['treasure'] not in ['hoard', 'personal']:
+                print('Options are hoard and personal')
+                exit()
         elif o == '--help':
             print('Help')
             print('Exetute the program to generate a random encounter. The following options are available.')
@@ -93,6 +99,7 @@ if __name__ == "__main__":
             print('%-40s %s' % ('-l, --pc-levels "level1 level2..."', 'A space separated list of player character levels. Surround the list with double quotes.'))
             print('%-40s %s' % ('-m, --monsters [number]', 'The number of monsters in the encounter. This may be represented in the dice notation, like 2d4+1, or as a number. If no value is specified, the size of the encounter is going to vary.'))
             print('%-40s %s' % ('-e, --environment [env]', 'The kind of environment in which the encounter takes place. If none is specified, a random one is chosen. Options are: %s.' % str(environments)))
+            print('%-40s %s' % ('-t, --treasure [type]', 'The kind of treasure that the monsters possess. Two types are available: personal and hoard. If none is set, then no treasure is rolled.'))
             exit()
         else:
             print('unhandled option: %s' % o)
@@ -231,10 +238,11 @@ encounter_multiplier.set(15, 100, 4)
 
 
 class Monster:
-    def __init__(self, name, cl):
+    def __init__(self, name, cl, legendary=False):
         self.name = name
         self.xp = challange_xp_map[cl]
         self.cl = cl
+        self.legendary = legendary
 
 
 monsters = {
@@ -1162,9 +1170,56 @@ if __name__ == "__main__":
             ("(Warning. The enconter does not match the party's xp threshold)"
                 if abs(total_monster_xp * multiplier - party_threshold) > (party_threshold / 25) else "")))
 
-        print('')
-        print('Treasure:')
-        generate_personal_treasure(int(party_avarage_level), number_monsters)
+        if chosen['treasure'] == 'personal':
+            print('')
+            print('Personal treasure:')
+            total_treasure = {"cp": 0, "sp": 0, "ep": 0, "gp": 0, "pp": 0}
+            for monster in monsters:
+                treasure = generate_personal_treasure(int(statistics.mean([m.cl for m in monsters])))
+                total_treasure['cp'] += treasure['cp']
+                total_treasure['sp'] += treasure['sp']
+                total_treasure['ep'] += treasure['ep']
+                total_treasure['gp'] += treasure['gp']
+                total_treasure['pp'] += treasure['pp']
+            print_personal(total_treasure)
+
+        elif chosen['treasure'] == 'hoard':
+            hoard = {
+                    "cp": 0, "sp": 0, "ep": 0, "gp": 0, "pp": 0, "magic": [],
+                    "gems_quantity": [], "gems_name": [], "gem_price": [], 'hoard_item_roll': []}
+            for _ in range(2 if any([m.legendary for m in monsters]) else 1):
+                treasure = generate_treasure_hoard(monsters[0].cl)
+
+                hoard['hoard_item_roll'].append(treasure['hoard_item_roll'])
+                hoard['gems_quantity'].append(treasure['gems_quantity'])
+                hoard['gems_name'].append(treasure['gems_name'])
+                hoard['gem_price'].append(treasure['gem_price'])
+
+                hoard['cp'] += treasure['cp']
+                hoard['sp'] += treasure['sp']
+                hoard['ep'] += treasure['ep']
+                hoard['gp'] += treasure['gp']
+                hoard['pp'] += treasure['pp']
+
+                hoard['magic'].extend(treasure['magic'])
+
+            print('')
+            print('Treasure hoard: (level: %d) (rolled: %s)' % (monsters[0].cl, hoard['hoard_item_roll']))
+
+            print_personal(hoard)
+            print("Gems or Art objecs:")
+            for i in range(len(hoard['hoard_item_roll'])):
+                if hoard['gems_quantity'][i] > 0:
+                    print("  %d %s (%d gp each)" % (hoard['gems_quantity'][i], hoard['gems_name'][i], hoard['gem_price'][i]))
+
+            magic = hoard['magic']
+            if len(magic) > 0:
+                print("Magic Items:")
+                magic.sort(key=lambda i: i.name)
+                for item in magic:
+                    name = item.name
+                    complement = item.complement_roll()
+                    print("  %s%s" % (name, ": "+complement if complement != "" else ""))
 
     else:
         print('Please, specify the pc-levels option. See --help for details.')
