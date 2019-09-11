@@ -76,15 +76,21 @@ The encounter generator generates encounters based on the level of the player
 characters, the desired number of monsters and the difficulty of the encounter.
 It has the following options:
 
--d --difficulty: Select the difficulty of the encounter. The options are: easy, medium, hard and deadly.
+-d --difficulty: Select the difficulty of the encounter. The options are: easy,
+medium, hard and deadly.
 
--l --pc-levels: As list separated by space of the level for each player character. Enclose the list in double quotes.
+-l --pc-levels: As list separated by comma of the level for each player
+character. If you enclose the list in double quotes, you may separate the
+levels with space.
 
--m --monsters: The number of monsters in the encounter. It may be either in dice notation or as a number.
-If not specified, the size of the encounter will vary.
+-m --monsters: The number of monsters in the encounter. It may be either in
+dice notation or as a number.  If not specified, the size of the encounter will
+vary.
 
--e --environment: The environment from which to choose the monsters. If this is not specified, a random environment is selected.
-The options are: arctic, coastal, desert, forest, grassland, hill, mountain, swamp, underdark, underwater, urban.
+-e --environment: The environment from which to choose the monsters. If this is
+not specified, a random environment is selected.  The options are: arctic,
+coastal, desert, forest, grassland, hill, mountain, swamp, underdark,
+underwater, urban.
 
 -t --treasure: The type of treasure the monsters carry. Options are personal
 and hoard. The personal treasure is rolled for each monster. The hoard is
@@ -104,10 +110,10 @@ with discression.
 
 - Genarate a deadly encounter for a party of levels 5, 5, 4 and 3.
 ```
-py dnd_encounter.py --pc-levels "5 5 4 3" --difficulty deadly
+py dnd_encounter.py --pc-levels 5,5,4,3 --difficulty deadly
 ```
 
 - Generate a medium encounter with 1d4 forest monsters for a party of levels 1, 1, 2 and 3.
 ```
-py dnd_encounter.py --pc-levels "1 1 2 3" --environment forest --monsters 1d4 --difficulty medium
+py dnd_encounter.py --pc-levels 1,1,2,3 --environment forest --monsters 1d4 --difficulty medium
 ```

@@ -73,7 +73,13 @@ if __name__ == "__main__":
                 print('Difficulty options: easy, medium, hard, deadly.')
                 exit()
         elif o in ['-l', '--pc-levels']:
-            chosen['pc-levels'] = [int(n) for n in a.split(' ')]
+            if ' ' in a:
+                chosen['pc-levels'] = [int(n) for n in a.split(' ')]
+            elif ',' in a:
+                chosen['pc-levels'] = [int(n) for n in a.split(',')]
+            else:
+                print('Please, either separate PC levels with commas, or, if inside double quotes, with spaces.')
+                exit()
         elif o in ['-m', '--monsters']:
             if a.isdigit():
                 chosen['monsters'] = int(a)
@@ -96,7 +102,7 @@ if __name__ == "__main__":
             print('Help')
             print('Exetute the program to generate a random encounter. The following options are available.')
             print('%-40s %s' % ('-d, --difficulty: [difficulty]', 'The difficulty of the encounter. The options are easy, medium, hard and deadly. The default is medium.'))
-            print('%-40s %s' % ('-l, --pc-levels "level1 level2..."', 'A space separated list of player character levels. Surround the list with double quotes.'))
+            print('%-40s %s' % ('-l, --pc-levels level1,level2,...', 'A comma separated list of player character levels. If you enclose the levels with double quotes, they may be separeted with spaces.'))
             print('%-40s %s' % ('-m, --monsters [number]', 'The number of monsters in the encounter. This may be represented in the dice notation, like 2d4+1, or as a number. If no value is specified, the size of the encounter is going to vary.'))
             print('%-40s %s' % ('-e, --environment [env]', 'The kind of environment in which the encounter takes place. If none is specified, a random one is chosen. Options are: %s.' % str(environments)))
             print('%-40s %s' % ('-t, --treasure [type]', 'The kind of treasure that the monsters possess. Two types are available: personal and hoard. If none is set, then no treasure is rolled.'))
@@ -428,7 +434,7 @@ monsters = {
             Monster(name="Mummy lord", cl=15),
             Monster(name="Purple worm", cl=15),
             Monster(name="Adult blue dragon", cl=16),
-            Monster(name="Adult blue dracolich", cl=17),
+            Monster(name="Adult blue dracolich", cl=17, legendary=True),
             Monster(name="Androsphinx", cl=17),
             Monster(name="Ancient brass dragon", cl=20),
             Monster(name="Ancient blue dragon", cl=23),
