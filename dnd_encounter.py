@@ -77,7 +77,7 @@ if __name__ == "__main__":
                 chosen['pc-levels'] = [int(a)]
             elif ',' in a:
                 chosen['pc-levels'] = [int(n) for n in a.split(',')]
-            elif '"' in a:
+            elif ' ' in a:
                 chosen['pc-levels'] = [int(n) for n in a.split(' ')]
             else:
                 print('Please, either separate PC levels with commas, or, if inside double quotes, with spaces.')
@@ -1203,7 +1203,7 @@ if __name__ == "__main__":
         print('Total encounter xp: %-10d (reward %d to each PC)' % (total_monster_xp, total_monster_xp / len(pc_levels)))
 
         threshold_warning = abs(total_monster_xp * multiplier - party_threshold) > (party_threshold / 25)
-        print('Modified encounter xp%s: %ds' % (
+        print('Modified encounter xp%s: %d' % (
             ('**' if threshold_warning else ''), total_monster_xp * multiplier))
 
         # warnings
