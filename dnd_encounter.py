@@ -73,10 +73,12 @@ if __name__ == "__main__":
                 print('Difficulty options: easy, medium, hard, deadly.')
                 exit()
         elif o in ['-l', '--pc-levels']:
-            if ' ' in a:
-                chosen['pc-levels'] = [int(n) for n in a.split(' ')]
+            if a.isdigit():
+                chosen['pc-levels'] = [int(a)]
             elif ',' in a:
                 chosen['pc-levels'] = [int(n) for n in a.split(',')]
+            elif '"' in a:
+                chosen['pc-levels'] = [int(n) for n in a.split(' ')]
             else:
                 print('Please, either separate PC levels with commas, or, if inside double quotes, with spaces.')
                 exit()
