@@ -1170,6 +1170,7 @@ if __name__ == "__main__":
         party_avarage_level = statistics.mean(pc_levels)
         party_threshold = get_party_threshold(pc_levels, difficulty)
 
+        # info
         print("Difficulty: %s" % difficulty)
         print('Character levels: %s (avarage: %.2f) %s' % (
             str(pc_levels),
@@ -1182,25 +1183,37 @@ if __name__ == "__main__":
         number_monsters = len(monsters)
         multiplier = get_encounter_multiplier(len(pc_levels), number_monsters)
 
+        # monsters
         print('')
         print('Monsters: %d (x%.1f xp) (%s)' % (number_monsters, multiplier, environment))
         total_monster_xp = 0
         monsters.sort(reverse=True, key=lambda m: m.cl)
+        cl_warning = False
         for monster in monsters:
-            warning = monster.cl > party_avarage_level
-            print('  %-40s cl: %-5s xp: %-10d %s' % (
-                monster.name,
+            warning = (monster.cl > party_avarage_level)
+            cl_warning = cl_warning or warning
+            print('  %-40s cl: %-5s xp: %d' % (
+                "%s%s" % (("* " if warning else ""), monster.name),
                 ("1/8" if monster.cl == 1/8 else ("1/4" if monster.cl == 1/4 else ("1/2" if monster.cl == 1/2 else str(monster.cl)))) + ",",
-                monster.xp,
-                ("(Warning: Monster is significantly stronger than party)" if warning else "")))
+                monster.xp))
             total_monster_xp += monster.xp
         print('')
         print('Total encounter xp: %-10d (reward %d to each PC)' % (total_monster_xp, total_monster_xp / len(pc_levels)))
-        print('Modified encounter xp: %-7d %s' % (
-            total_monster_xp * multiplier,
-            ("(Warning. The enconter does not match the party's xp threshold)"
-                if abs(total_monster_xp * multiplier - party_threshold) > (party_threshold / 25) else "")))
 
+        threshold_warning = abs(total_monster_xp * multiplier - party_threshold) > (party_threshold / 25)
+        print('Modified encounter xp%s: %ds' % (
+            ('**' if threshold_warning else ''), total_monster_xp * multiplier))
+
+        # warnings
+        if cl_warning:
+            print("")
+            print("* Warning: Monster is significantly stronger than party.")
+
+        if threshold_warning:
+            print("")
+            print("** Warning. The enconter does not match the party's xp threshold.")
+
+        # treasure
         if chosen['treasure'] == 'personal':
             print('')
             print('Personal treasure:')
