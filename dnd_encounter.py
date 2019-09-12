@@ -50,8 +50,9 @@ groups = [
 chosen = {
         'difficulty': 'medium',
         'pc-levels': [],
-        'environment': roll_from_list(environments),
+        'environment': '',
         'monsters': -1,
+        'name': '',
         'treasure': ''
         }
 
@@ -59,8 +60,8 @@ if __name__ == "__main__":
     try:
         optlist, args = getopt.getopt(
                 sys.argv[1:],
-                'd:l:m:e:t:',
-                ['difficulty=', 'pc-levels=', 'monsters=', 'environment=', 'treasure=', 'help']
+                'd:l:m:n:e:t:',
+                ['difficulty=', 'pc-levels=', 'monsters=', 'name=', 'environment=', 'treasure=', 'help']
                 )
     except getopt.GetooptError as e:
         print(e)
@@ -90,6 +91,8 @@ if __name__ == "__main__":
             if chosen['monsters'] > 20:
                 print('At most 20 monsters are permitted')
                 exit()
+        elif o in ['-n', '--name']:
+            chosen['name'] = a.lower().split(',')
         elif o in ['-e', '--environment']:
             chosen['environment'] = a.lower()
             if chosen['environment'] not in environments:
@@ -106,7 +109,8 @@ if __name__ == "__main__":
             print('%-40s %s' % ('-d, --difficulty: [difficulty]', 'The difficulty of the encounter. The options are easy, medium, hard and deadly. The default is medium.'))
             print('%-40s %s' % ('-l, --pc-levels level1,level2,...', 'A comma separated list of player character levels. If you enclose the levels with double quotes, they may be separeted with spaces.'))
             print('%-40s %s' % ('-m, --monsters [number]', 'The number of monsters in the encounter. This may be represented in the dice notation, like 2d4+1, or as a number. If no value is specified, the size of the encounter is going to vary.'))
-            print('%-40s %s' % ('-e, --environment [env]', 'The kind of environment in which the encounter takes place. If none is specified, a random one is chosen. Options are: %s.' % str(environments)))
+            print('%-40s %s' % ('-e, --environment [env]', 'The kind of environment in which the encounter takes place. If none is specified, monsters are taken from all environments. Options are: %s.' % str(environments)))
+            print('%-40s %s' % ('-n, --name [name1,name2...]', 'Specify part of the name of the monster you want to use. Separate two or more names with a comma. Use this options instead of environment.'))
             print('%-40s %s' % ('-t, --treasure [type]', 'The kind of treasure that the monsters possess. Two types are available: personal and hoard. If none is set, then no treasure is rolled.'))
             exit()
         else:
@@ -1050,6 +1054,11 @@ monsters = {
             ]
         }
 
+all_monsters = []
+for m in monsters:
+    all_monsters.extend(monsters[m])
+all_monsters = list(set(all_monsters))
+
 groups = {
 
         'bandits': [
@@ -1180,8 +1189,20 @@ if __name__ == "__main__":
             ("(Small party)" if len(pc_levels) <= 2 else ("(Large party)" if len(pc_levels) >= 6 else ""))))
         print('Party xp threshold: %d' % (party_threshold))
 
-        environment = chosen['environment']
-        monsters = choose_monsters(party_threshold, len(pc_levels), monsters[environment], number_monsters)
+        # define the monster pool and find the group
+        if chosen['name'] != '':
+            environment = 'any environment'
+            monster_pool = [m for m in all_monsters if any(n for n in chosen['name'] if n in m.name.lower())]
+            monsters = choose_monsters(party_threshold, len(pc_levels), monster_pool, number_monsters)
+        else:
+            environment = chosen['environment']
+            if environment != '':
+                monster_pool = monsters[environment]
+            else:
+                environment = 'any environment'
+                monster_pool = all_monsters
+            monsters = choose_monsters(party_threshold, len(pc_levels), monster_pool, number_monsters)
+
         number_monsters = len(monsters)
         multiplier = get_encounter_multiplier(len(pc_levels), number_monsters)
 

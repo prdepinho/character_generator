@@ -88,9 +88,12 @@ dice notation or as a number.  If not specified, the size of the encounter will
 vary.
 
 -e --environment: The environment from which to choose the monsters. If this is
-not specified, a random environment is selected.  The options are: arctic,
-coastal, desert, forest, grassland, hill, mountain, swamp, underdark,
+not specified, monsters may be taken from all environments.  The options are:
+arctic, coastal, desert, forest, grassland, hill, mountain, swamp, underdark,
 underwater, urban.
+
+-n --name: A comma separated list of partial names for any monster you want in
+the encounter. Use this option instead of environment.
 
 -t --treasure: The type of treasure the monsters carry. Options are personal
 and hoard. The personal treasure is rolled for each monster. The hoard is
@@ -117,3 +120,6 @@ py dnd_encounter.py --pc-levels 5,5,4,3 --difficulty deadly
 ```
 py dnd_encounter.py --pc-levels 1,1,2,3 --environment forest --monsters 1d4 --difficulty medium
 ```
+
+- Generate a hard encounter of gnolls and wargs for a party of levels 4, 4, 4 and 5:
+py dnd_encounter.py --pc-levels 4,4,4,5 --difficulty hard --name gnoll,worg
