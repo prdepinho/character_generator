@@ -1193,6 +1193,9 @@ if __name__ == "__main__":
         if chosen['name'] != '':
             environment = 'any environment'
             monster_pool = [m for m in all_monsters if any(n for n in chosen['name'] if n in m.name.lower())]
+            if len(monster_pool) == 0:
+                print('No monster found with names that include: %s' % str(chosen['name']))
+                exit()
             monsters = choose_monsters(party_threshold, len(pc_levels), monster_pool, number_monsters)
         else:
             environment = chosen['environment']

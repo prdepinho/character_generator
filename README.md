@@ -121,5 +121,5 @@ py dnd_encounter.py --pc-levels 5,5,4,3 --difficulty deadly
 py dnd_encounter.py --pc-levels 1,1,2,3 --environment forest --monsters 1d4 --difficulty medium
 ```
 
-- Generate a hard encounter of gnolls and wargs for a party of levels 4, 4, 4 and 5:
+- Generate a hard encounter of gnolls and worgs for a party of levels 4, 4, 4 and 5:
 py dnd_encounter.py --pc-levels 4,4,4,5 --difficulty hard --name gnoll,worg
