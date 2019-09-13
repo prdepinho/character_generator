@@ -1,6 +1,6 @@
 
 A set of programs to help dungeon masters generate random characters, encounters
-and treasure for their for D&amp;D 5E campaign.
+and treasure for their D&amp;D 5E campaign.
 
 D&D is property of Wizard of the Coast. https://company.wizards.com/
 
