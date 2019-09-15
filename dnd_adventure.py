@@ -222,6 +222,37 @@ framing_events.set(95, 96, "Violent uprising.")
 framing_events.set(97, 98, "Wedding or wedding anniversary.")
 framing_events.set(99, 100, "Concurrence of two events (roll twice, ignoring reults of 99 or 100).")
 
+moral_quandaries = RangeDict()
+moral_quandaries.set(1, 3, "Ally quandary.")
+moral_quandaries.set(4, 6, "Friend quandary.")
+moral_quandaries.set(7, 12, "Honor quandary.")
+moral_quandaries.set(13, 16, "Rescue quandary.")
+moral_quandaries.set(17, 20, "Respect quandary.")
+
+twists = {
+        1: "The adventurers are racing against other creatures with the same or opposite goal.",
+        2: "The adventurers become responsible for the safety of a noncombatant NPC.",
+        3: "The adventurers are prohibited from killing the villain, but the villain has no compunctions about killing them.",
+        4: "The adventurers have a time limit.",
+        5: "The adventurers have a received false or extraneous information.",
+        6: "Completing an adventure goal fulfills a prophecy or prevents the fulfillment of a prophecy.",
+        7: "The adventurers have two different goals, but they can complete only one.",
+        8: "Completing the goal secretly helps the villain.",
+        9: "The adventurers must cooperate with a known enemy to achieve the goal.",
+        10: "The adventurers are under magical compulsion (such as a geas spell) to complete their goal.",
+        }
+
+site_quests = {
+        1: "Find a specific item rumored to be in the area.",
+        2: "Retrieve a stolen item in the villain's possession.",
+        3: "Receive information from an NPC in the area.",
+        4: "Rescue a captive.",
+        5: "Discover the fate of a missing NPC.",
+        6: "Slay a specific monster.",
+        7: "Discover the nature and origin of a strange phenomenon in the area.",
+        8: "Secure the aid of a character or creature in the area.",
+        }
+
 
 def roll_dungeon_goal():
     result = roll(20)
@@ -256,6 +287,31 @@ def roll_other_goal():
     other_goal = [other_goals[roll(12)]]
     return other_goal
 
+def roll_event_based_goals():
+    result = roll(20)
+    if result < 20:
+        return [
+                event_based_goals[result]
+                ]
+    else:
+        return [
+                event_based_goals[roll(19)],
+                event_based_goals[roll(19)]
+                ]
+
+
+def roll_framing_events():
+    result = roll(100)
+    if result < 99:
+        return [
+                framing_events.get(result)
+                ]
+    else:
+        return [
+                framing_events.get(roll(98)),
+                framing_events.get(roll(98))
+                ]
+
 
 if __name__ == "__main__":
     dungeon = roll(2) == 1
@@ -271,6 +327,13 @@ if __name__ == "__main__":
     patron = patrons.get(roll(20))
     introduction = introductions[roll(12)]
     climax = climaxes[roll(12)]
+
+    event_based_villain_action = event_based_villain_actions[roll(6)]
+    event_based_goal = roll_event_based_goals()
+    framing_event = roll_framing_events()
+    moral_quandary = moral_quandaries.get(roll(20))
+    twist = twists[roll(10)]
+    side_quest = site_quests[roll(8)]
 
 
     # print
@@ -296,3 +359,9 @@ if __name__ == "__main__":
     print("- Patron: %s" % patron)
     print("- Introduction: %s" % introduction)
     print("- Climax: %s" % climax)
+
+    print("- Event based billain actions: %s: %s" % (event_based_villain_action['name'], event_based_villain_action['desc']))
+    print("- Event based goal: %s" % event_based_goal)
+    print("- Framing event: %s" % framing_event)
+    print("- Moral quandary: %s" % moral_quandary)
+    print("- Side quest: %s" % side_quest)
