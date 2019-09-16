@@ -475,6 +475,10 @@ class Item:
     def __init__(self, name, complement_roll=lambda: ''):
         self.name = name
         self.complement_roll = complement_roll
+        self.creator = {}
+        self.minor_properties = [{}]
+        self.history = {}
+        self.quirk = {}
 
 
 magicitems['a'].set(1, 50, Item(name="Potion of healing"))
@@ -1056,6 +1060,73 @@ personal.set(11, 16, personal_tiers[3])
 personal.set(17, 30, personal_tiers[4])
 
 
+creators = RangeDict()
+creators.set(1, 1,   {"name": "Aberration",        "desc": "The item was created by aberrations in ancient times, possibly for the use of favored humanoid thralls. Whe seen from the corner of the eye, the item seems to be moving."})
+creators.set(2, 4,   {"name": "Human",             "desc": "The item was created during the heyday of a fallen human kingdom, or it is tied to a human of legend. It might hold writing in a forgotten tongue or symbols whose significance is lost to the ages."})
+creators.set(5, 5,   {"name": "Celestial",         "desc": "The weapon is inscribed with feathered wings, suns, and other symbols of good. Fiends find the item's presence repulsive."})
+creators.set(6, 6,   {"name": "Dragon",            "desc": "This item is made from scales and talons shed by a dragons. Perhaps it incorporates precious metals and gems from the dragon's hoard. It grows slightly warm when within 120 feet of a dragon."})
+creators.set(7, 7,   {"name": "Drow",              "desc": "The item is half the normal weight. It is black and inscribed with spiders and webs in honor of Lolth. It might function poorly, or disintegrate, if exposed to sunlight for 1 minute or more."})
+creators.set(8, 9,   {"name": "Dwarf",             "desc": "The item is durable and has Dwarven runes worked into its design. It might be associated with a clan that would like to see it returned to their ancestral halls."})
+creators.set(10, 10, {"name": "Elemental Air",     "desc": "The item is half the normal weight and feels hollow. If it's made of fabric, it is diaphanous."})
+creators.set(11, 11, {"name": "Elemental Eart",    "desc": "This item might be crafted from stone. Any cloth or leather elements are studded with finely polished rock."})
+creators.set(12, 12, {"name": "Elemental Fire",    "desc": "This item is warm to the touch, and any metal parts are craftedd from black ireon. Sigins of flames cover its surface. Shades of red and orange are the prominent colors."})
+creators.set(13, 13, {"name": "Elemental Water",   "desc": "Loustrous fish scales replace leather or cloth on this item, and metal portions are instead crafted from seashells and worked coral as hard as any metal."})
+creators.set(14, 15, {"name": "Elf",               "desc": "The item is half the normal weight. It is adorned with symbols of nature: leaves, vines, stars, and the like."})
+creators.set(16, 16, {"name": "Fey",               "desc": "The item is exquisitely crafted from the finest materials and glows with a pale radiance in moonlight, shedding dim light in a 5-foot radius. Any metal in the item is silver or mithral, rather than iron or steel."})
+creators.set(17, 17, {"name": "Fiend",             "desc": "The item is made of black iron or horn inscribed with runes, and any cloth or leather components are crafted from the hide of fiends. It is warm to the touch and features leering faces or vile runes engraved on its surface. Celestials find the item's presence repulsive."})
+creators.set(18, 18, {"name": "Giant",             "desc": "The item is larger than normal and was crafted by giants for use by their smaller allies."})
+creators.set(19, 19, {"name": "Gnome",             "desc": "The item is crafted to appear ordinary, and it might look worn. It could also incorporate gears and cechanical components, even if these aren't essential to the item's function."})
+creators.set(20, 20, {"name": "Undead",            "desc": "The item incorportes imagery of death, such as bones and skulls, and it might be crafted from parts of corpses. It feels cold to the touch."})
+
+minor_properties = {
+        1:  {"name": "Beacon",              "desc": "The bearer can use a bonus action to cause the item to shed bright light in a 10-foot radius and dim light for an additional 10 feet, or to extinguish the light."},
+        2:  {"name": "Compass",             "desc": "The wielder can use an action to learn which way is nirth."},
+        3:  {"name": "Conscientious",       "desc": "When the bearer of this item contemplates or undertakes a malevolent act, the item enhances pangs of conscience."},
+        4:  {"name": "Delver",              "desc": "While underground, the bearer of this item always knows the item's depth below the surface and the direction to the nearest staircase, ramp, or other path leading upward."},
+        5:  {"name": "Gleaming",            "desc": "This item never gets dirty."},
+        6:  {"name": "Guardian",            "desc": "The item whispers warnings to its bearer, granting a +2 bonus to initiative if the bearer isn't incapacitated."},
+        7:  {"name": "Harmonious",          "desc": "Attuning to this item takes only 1 minute."},
+        8:  {"name": "Hidden Message",      "desc": "A message is hidden somewhere on the item. It might be visible only at a certain time of the year, under the light of one phase of the moon, or in a specific location."},
+        9:  {"name": "Key",                 "desc": "The item is used to unlock a container, chamber, vault, or other entryway."},
+        10: {"name": "Language",            "desc": "The bearer can speak and understand a language of the DM's choice while the item is on the bearer's person."},
+        11: {"name": "Sentinel",            "desc": "Choose a kind of creature that is an enemy of the item's creator. This item glows faintly when such creatures are within 120 feet of it."},
+        12: {"name": "Song Craft",          "desc": "Whenever this item is struck or is used to strike a foe, its bearer hears a fragment of an ancient song."},
+        13: {"name": "Strange Material",    "desc": "The item was created from a material that is bizarre given its purpose. Its durability is unaffected."},
+        14: {"name": "Temperate",           "desc": "The bearer suffers no harm in temperature as cold as -209 degrees Fahrenheit or as warm as 120 degrees Fahrenheit."},
+        15: {"name": "Unbreakable",         "desc": "The item can't be broken. Special means must be used to destroy it."},
+        16: {"name": "War Leader",          "desc": "The bearer can use an action to cause his or her voice to carry clearly for up to 300 feet until the end of the bearer's next turn."},
+        17: {"name": "Waterborn",           "desc": "This item floats on water and other liquids. Its bearer has advantage on Strength (Athletics) checks to swim."},
+        18: {"name": "Wicked",              "desc": "When the bearer is presented with an opportunity to act in a selfish or malevolent way, the item hightens the bearer's urge to do so."},
+        19: {"name": "Illusion",            "desc": "The item is imbued with illusion magic, allowing its bearer to alter the item's appearance in minor ways. Such alterations don't change how the item is worn, carried or wielded, and they have no effect on its other magical properties. For example, the wearer could make a red robe appear blue, or make a gold ring look like it's made of ivory. The item reverts to its true appearance when no one is carrying or wearing it."},
+        20: {"name": "Roll twice",          "desc": "Reroll any additional 20s."},
+        }
+
+history = {
+        1: {"name": "Arcane",           'desc': "This item was created for an ancient order of spellcasters and bears the order's symbol."},
+        2: {"name": "Bane",             'desc': "This item was created by the foes of a particular culture or kind of creature. If the culture or creatures are still around, they might recognize the item and single out the bearer as an enemy."},
+        3: {"name": "Heroic",           'desc': "A great hero once wielded this item. Anyone who's familiar with the item's history expects great deeds from the new owner."},
+        4: {"name": "Ornament",         'desc': "The item was created to honor a special occasion. Inset gemstones, gold or platinum inlays, and gold or silver filigree adorn its surface."},
+        5: {"name": "Prophecy",         'desc': "The item features in a prophecy: its bearer is destined to play a key role in future events. Someone else who wants to play that role might try to steal the item, or someone who wants to prevent the prophecy from being fulfilled might try to kill the item's bearer."},
+        6: {"name": "Religious",        'desc': "This item was used in religious ceremonies dedicated to a particular deity. It has holy symbols worked into it. The god's followers might try to persuade its owner to donate it to a temple, steal the item for themselves, or celebrate its use by a cleric or paladin of the same deity."},
+        7: {"name": "Siniser",          'desc': "This item is linked to a deed of great evil, such as a massacre or an assassination. It might have a name or be closely associated with a billain who used it. Anyone familiar with the item's history is likely to treat it and its owner with suspicion."},
+        8: {"name": "Symbol of Power",  'desc': "This item was once used as part of royal regalia or as a badge or high office. Its former owner or that person's descendants might desire it, or someone might mistakenly assume its new owner is the item's legitimate inheritor."},
+        }
+
+quirks = {
+        1:  {"name": "Blissful",    "desc": "While in possession of the item, the bearer feels fortunate and otimistic about what the future holds. Butterflies and other harmless creatures might frolic in the item's presence."},
+        2:  {"name": "Confident",   "desc": "The item helps its bearer feel self-assured."},
+        3:  {"name": "Covetous",    "desc": "The item's bearer becomes obsessed with material wealth."},
+        4:  {"name": "Frail",       "desc": "The item crumbles, frays, chips, or cracks slightly when wielded, worn, or activated. This quirk has no effect on its properties, but if the item has seen much use, it looks decrepit."},
+        5:  {"name": "Hungry",      "desc": "This item's magical properties function only if fresh blood from a humanoid has been applied to it within 24 hours. It needs only a drop to activate."},
+        6:  {"name": "Loud",        "desc": "The item makes a loud noise - such as a clang, a shout, or a resonating gong - when used."},
+        7:  {"name": "Metamorphic", "desc": "The item periodically and randomly alters its appearance in slight ways. The bearer has no control over these minor alterations, which have no effect on the item's use."},
+        8:  {"name": "Muttering",   "desc": "The item grumbles and mutters. A creature who listens carefully to the item might learn something useful."},
+        9:  {"name": "Painful",     "desc": "The bearer experiences a harmless flash of pain when using the item."},
+        10: {"name": "Possessive",  "desc": "The item demands attunement when first wielded or worn, and it doesn't allow its bearer to attune to other items. (Other items already attuned to the bearer remain so until their attunement ends.)"},
+        11: {"name": "Repulsive",   "desc": "The bearer feels a sense of distast when in contact with the item, and continues to sense discomfort while bearing it."},
+        12: {"name": "Slothful",    "desc": "The bearer of this item feels slothful and lethargic. While attuned to the item, the bearer requires 10 hours to finish a long rest."},
+        }
+
 def get_gem_price(gem):
     for k in gemstones:
         if gem in gemstones[k]:
@@ -1103,6 +1174,24 @@ def generate_treasure_hoard(level):
     for i in range(magic_quantity):
         magic.append(hoard_item.magic2.get(roll(100)))
 
+    for item in magic:
+        item.creator = creators.get(roll(20))
+
+        result = roll(20)
+        if result < 20:
+            item.minor_properties = [
+                    minor_properties[result]
+                    ]
+        else:
+            item.minor_properties = [
+                    minor_properties[roll(19)],
+                    minor_properties[roll(19)]
+                    ]
+        
+        item.history = history[roll(8)]
+        item.quirk = quirks[roll(12)]
+
+
     return {
             "hoard_item_roll": hoard_item_roll,
             "cp": cp, "sp": sp, "ep": ep, "gp": gp, "pp": pp,
@@ -1111,6 +1200,19 @@ def generate_treasure_hoard(level):
             "gem_price": gem_price,
             "magic": magic
             }
+
+
+def print_items(magic):
+    magic.sort(key=lambda i: i.name)
+    for item in magic:
+        name = item.name
+        complement = item.complement_roll()
+        print("  - %s%s" % (name, ": "+complement if complement != "" else ""))
+        if not any(x in name.lower() for x in ['potion', 'scroll', 'ammunition']):
+            print("    | Creator: %s" % item.creator['name'])
+            print("    | Minor Properties: %s" % [p['name'] for p in item.minor_properties])
+            print("    | History: %s" % item.history['name'])
+            print("    | Quirk: %s" % item.quirk['name'])
 
 
 def print_hoard(treasure):
@@ -1128,11 +1230,7 @@ def print_hoard(treasure):
     magic = treasure['magic']
     if len(magic) > 0:
         print("Magic Items:")
-        magic.sort(key=lambda i: i.name)
-        for item in magic:
-            name = item.name
-            complement = item.complement_roll()
-            print("  %s%s" % (name, ": "+complement if complement != "" else ""))
+        print_items(magic)
 
 
 def generate_personal_treasure(level, quantity=1):

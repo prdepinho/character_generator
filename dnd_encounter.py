@@ -1,6 +1,6 @@
 
 from range_dict import RangeDict
-from dnd_treasure import generate_personal_treasure, print_personal, generate_treasure_hoard
+from dnd_treasure import generate_personal_treasure, print_personal, generate_treasure_hoard, print_items
 from dnd_dice import Dice, roll_from_list, roll
 import statistics
 import getopt
@@ -1735,11 +1735,7 @@ if __name__ == "__main__":
             magic = hoard['magic']
             if len(magic) > 0:
                 print("Magic Items:")
-                magic.sort(key=lambda i: i.name)
-                for item in magic:
-                    name = item.name
-                    complement = item.complement_roll()
-                    print("  %s%s" % (name, ": "+complement if complement != "" else ""))
+                print_items(magic)
 
     else:
         print('Please, specify the pc-levels option. See --help for details.')
