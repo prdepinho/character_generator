@@ -1060,7 +1060,7 @@ for m in monsters:
 all_monsters = list(set(all_monsters))
 
 
-all_monsters = {
+all_monsters = [
         Monster(name="Aarakocra", cl=1/4),
         Monster(name="Aboleth", cl=10, legendary=True),
         Monster(name="Deva", cl=10),
@@ -1351,7 +1351,7 @@ all_monsters = {
         Monster(name="Troglodyte", cl=1/4),
         Monster(name="Troll", cl=5),
         Monster(name="Umber Hulk", cl=5),
-        Monster(name="Unicorn", cl=5, lengedary=True),
+        Monster(name="Unicorn", cl=5, legendary=True),
         Monster(name="Vampire", cl=13, legendary=True),
         Monster(name="Vampire Spawn", cl=5),
         Monster(name="Water Weird", cl=3),
@@ -1436,7 +1436,7 @@ all_monsters = {
         Monster(name="Lizard", cl=0),
         Monster(name="Mammoth", cl=6),
         Monster(name="Mastiff", cl=1/8),
-        Monster(name="Mule", cl=-1/8),
+        Monster(name="Mule", cl=1/8),
         Monster(name="Octopus", cl=0),
         Monster(name="Owl", cl=0),
         Monster(name="Panther", cl=1/4),
@@ -1456,7 +1456,7 @@ all_monsters = {
         Monster(name="Spider", cl=0),
         Monster(name="Swarm of Bats", cl=1/4),
         Monster(name="Swarm of Insects", cl=1/2),
-        Monster(name="Swarm of Poisonous Snakes", cl=2)
+        Monster(name="Swarm of Poisonous Snakes", cl=2),
         Monster(name="Swarm of Quippers", cl=1),
         Monster(name="Swarm of Rats", cl=1/4),
         Monster(name="Swarm of Ravens", cl=1/4),
@@ -1488,25 +1488,7 @@ all_monsters = {
         Monster(name="Thug", cl=1/2),
         Monster(name="Tribal Warrior", cl=1/8),
         Monster(name="Veteran", cl=3),
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        Monster(name="
-        }
+        ]
 
 
 groups = {
