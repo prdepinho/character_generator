@@ -1025,8 +1025,8 @@ class Character:
 
         # choose a race.
 
-        if chosen['race'] in [race.name for race in races]:
-            self.race = [race for race in races if race.name == chosen['race']][0]
+        if chosen['race'] in [race.name.lower() for race in races]:
+            self.race = [race for race in races if race.name.lower() == chosen['race']][0]
         else:
             self.race = roll_from_list(races)
         self.size = self.race.size
@@ -1090,8 +1090,8 @@ class Character:
 
         # choose a background, traits, an ideal, a bond and a flaw.
 
-        if chosen['background'] in [bg.name for bg in backgrounds]:
-            self.background = [bg for bg in backgrounds if bg.name == chosen['background']][0]
+        if chosen['background'] in [bg.name.lower() for bg in backgrounds]:
+            self.background = [bg for bg in backgrounds if bg.name.lower() == chosen['background']][0]
         else:
             self.background = roll_from_list(backgrounds)
         self.traits = random.sample(self.background.traits, 2)
@@ -1243,11 +1243,11 @@ if chosen['statistics'] > 0:
 
     total = chosen['statistics']
     for i in range(total):
-        if chosen['class'] in [cls.name for cls in classes]:
+        if chosen['class'] in [cls.name.lower() for cls in classes]:
             while True:
                 c = Character()
                 c.generate_random_character()
-                if c.character_class.name == chosen['class']:
+                if c.character_class.name.lower() == chosen['class']:
                     break
         else:
             c = Character()
@@ -1284,11 +1284,11 @@ if chosen['statistics'] > 0:
         print('  %-20s %f' % ('Standard Deviation:', statistics.stdev(ability_data_map[abl])))
 
 else:
-    if chosen['class'] in [cls.name for cls in classes]:
+    if chosen['class'] in [cls.name.lower() for cls in classes]:
         while True:
             c = Character()
             c.generate_random_character()
-            if c.character_class.name == chosen['class']:
+            if c.character_class.name.lower() == chosen['class']:
                 c.print_sheet()
                 break
 
